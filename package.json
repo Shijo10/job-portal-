@@ -1,0 +1,16 @@
+{
+  "name": "job-portal-admin",
+  "version": "1.0.0",
+  "description": "Admin panel for local workers job portal",
+  "scripts": {
+    "start": "cd backend && npm start",
+    "dev": "cd backend && npm run dev",
+    "seed": "cd backend && npm run seed",
+    "install-backend": "cd backend && npm install",
+    "install-all": "npm run install-backend"
+  },
+  "keywords": ["job-portal", "admin-panel", "mongodb"],
+  "author": "",
+  "license": "ISC"
+}
+

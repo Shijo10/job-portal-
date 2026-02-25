@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - JobConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/payment.css">
+    <link rel="stylesheet" href="/dark-mode.css">
+    <!-- jsPDF library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='/'">
+                <i class="fas fa-briefcase"></i>
+                <span>JobConnect</span>
+            </div>
+            <button onclick="window.history.back()" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="payment-container">
+            <!-- Left Side - Payment Form -->
+            <div class="payment-form">
+                <div class="form-header">
+                    <h1><i class="fas fa-credit-card"></i> Payment Details</h1>
+                    <p>Complete your payment to hire the worker</p>
+                </div>
+
+                <!-- Worker Info Card -->
+                <div class="worker-card">
+                    <div class="worker-avatar" id="worker-avatar">W</div>
+                    <div class="worker-details">
+                        <h3 id="worker-name">Worker Name</h3>
+                        <p><i class="fas fa-rupee-sign"></i> <span id="hourly-rate">0</span>/hour</p>
+                    </div>
+                </div>
+
+                <!-- Job Details Form -->
+                <form id="payment-form">
+                    <div class="form-group">
+                        <label><i class="fas fa-briefcase"></i> Job Title *</label>
+                        <input type="text" id="job-title" placeholder="e.g., Kitchen Plumbing Repair" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-align-left"></i> Job Description *</label>
+                        <textarea id="job-description" rows="4" placeholder="Describe the work to be done..." required></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-clock"></i> Estimated Hours *</label>
+                            <input type="number" id="estimated-hours" min="1" value="4" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar"></i> Start Date *</label>
+                            <input type="date" id="start-date" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marker-alt"></i> Work Location *</label>
+                        <input type="text" id="work-location" placeholder="e.g., Koramangala, Bangalore" required>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="form-group">
+                        <label><i class="fas fa-wallet"></i> Payment Method *</label>
+                        <div class="payment-methods">
+                            <label class="payment-method">
+                                <input type="radio" name="payment-method" value="upi" checked>
+                                <div class="method-card">
+                                    <i class="fas fa-mobile-alt"></i>
+                                    <span>UPI</span>
+                                </div>
+                            </label>
+                            <label class="payment-method">
+                                <input type="radio" name="payment-method" value="card">
+                                <div class="method-card">
+                                    <i class="fas fa-credit-card"></i>
+                                    <span>Card</span>
+                                </div>
+                            </label>
+                            <label class="payment-method">
+                                <input type="radio" name="payment-method" value="netbanking">
+                                <div class="method-card">
+                                    <i class="fas fa-university"></i>
+                                    <span>Net Banking</span>
+                                </div>
+                            </label>
+                            <label class="payment-method">
+                                <input type="radio" name="payment-method" value="wallet">
+                                <div class="method-card">
+                                    <i class="fas fa-wallet"></i>
+                                    <span>Wallet</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- UPI Details -->
+                    <div id="upi-details" class="payment-details">
+                        <div class="form-group">
+                            <label><i class="fab fa-google-pay"></i> UPI ID</label>
+                            <input type="text" id="upi-id" placeholder="yourname@upi">
+                        </div>
+                    </div>
+
+                    <!-- Card Details -->
+                    <div id="card-details" class="payment-details" style="display: none;">
+                        <div class="form-group">
+                            <label><i class="fas fa-credit-card"></i> Card Number</label>
+                            <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Expiry Date</label>
+                                <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5">
+                            </div>
+                            <div class="form-group">
+                                <label>CVV</label>
+                                <input type="text" id="card-cvv" placeholder="123" maxlength="3">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-pay">
+                        <i class="fas fa-lock"></i>
+                        Pay ₹<span id="total-amount">0</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right Side - Order Summary -->
+            <div class="order-summary">
+                <h2><i class="fas fa-receipt"></i> Order Summary</h2>
+                
+                <div class="summary-item">
+                    <span>Worker Rate</span>
+                    <span>₹<span id="summary-rate">0</span>/hour</span>
+                </div>
+                <div class="summary-item">
+                    <span>Estimated Hours</span>
+                    <span id="summary-hours">4</span>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-item">
+                    <span>Subtotal</span>
+                    <span>₹<span id="summary-subtotal">0</span></span>
+                </div>
+                <div class="summary-item">
+                    <span>Platform Fee (5%)</span>
+                    <span>₹<span id="summary-fee">0</span></span>
+                </div>
+                <div class="summary-item">
+                    <span>GST (18%)</span>
+                    <span>₹<span id="summary-gst">0</span></span>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-item total">
+                    <span>Total Amount</span>
+                    <span>₹<span id="summary-total">0</span></span>
+                </div>
+
+                <div class="security-badge">
+                    <i class="fas fa-shield-alt"></i>
+                    <div>
+                        <strong>Secure Payment</strong>
+                        <p>Your payment information is encrypted and secure</p>
+                    </div>
+                </div>
+
+                <div class="features">
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>100% Verified Workers</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Money-back Guarantee</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>24/7 Support</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal">
+        <div class="modal-content">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2>Payment Successful!</h2>
+            <p>Your payment has been processed successfully.</p>
+            <p class="receipt-info">Receipt ID: <strong id="receipt-id">RCP-000000</strong></p>
+            <div class="modal-actions">
+                <button class="btn-download" id="download-receipt-btn">
+                    <i class="fas fa-download"></i> Download Receipt
+                </button>
+                <button class="btn-secondary" onclick="window.location.href='/my-jobs'">
+                    <i class="fas fa-list"></i> View My Jobs
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Assistant Widget -->
+    <script>
+        fetch('/ai-assistant.html')
+            .then(response => response.text())
+            .then(html => {
+                document.body.insertAdjacentHTML('beforeend', html);
+            });
+    </script>
+
+    <script src="/payment.js"></script>
+    <script src="/dark-mode.js"></script>
+</body>
+</html>
+

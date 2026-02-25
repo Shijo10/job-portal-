@@ -1,0 +1,91 @@
+<!-- AI Assistant Widget -->
+<div id="ai-assistant-widget">
+    <!-- Floating Button -->
+    <button id="ai-assistant-btn" class="ai-assistant-btn" title="AI Assistant">
+        <i class="fas fa-robot"></i>
+        <span class="ai-badge">AI</span>
+    </button>
+
+    <!-- Chat Window -->
+    <div id="ai-assistant-window" class="ai-assistant-window">
+        <!-- Header -->
+        <div class="ai-assistant-header">
+            <div class="ai-assistant-title">
+                <i class="fas fa-robot"></i>
+                <div>
+                    <h3>JobConnect AI Assistant</h3>
+                    <p>Here to help you 24/7</p>
+                </div>
+            </div>
+            <button id="ai-close-btn" class="ai-close-btn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Messages -->
+        <div id="ai-messages" class="ai-messages">
+            <div class="ai-message ai-bot">
+                <div class="ai-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="ai-message-content">
+                    <p>Hello! 👋 I'm your JobConnect AI Assistant. I'm here to help you with:</p>
+                    <ul>
+                        <li>How to post jobs or find workers</li>
+                        <li>Payment methods and pricing</li>
+                        <li>Account management</li>
+                        <li>Technical support</li>
+                        <li>Safety and security</li>
+                    </ul>
+                    <p>What would you like to know?</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Suggestions -->
+        <div id="ai-suggestions" class="ai-suggestions">
+            <button class="ai-suggestion-btn" onclick="sendAIMessage('How to post a job?')">
+                📝 How to post a job?
+            </button>
+            <button class="ai-suggestion-btn" onclick="sendAIMessage('How to find workers?')">
+                👷 How to find workers?
+            </button>
+            <button class="ai-suggestion-btn" onclick="sendAIMessage('Payment methods')">
+                💳 Payment methods
+            </button>
+            <button class="ai-suggestion-btn" onclick="sendAIMessage('Is it safe?')">
+                🔒 Is it safe?
+            </button>
+        </div>
+
+        <!-- Input -->
+        <div class="ai-input-container">
+            <input 
+                type="text" 
+                id="ai-input" 
+                class="ai-input" 
+                placeholder="Ask me anything..."
+                autocomplete="off"
+            />
+            <button id="ai-send-btn" class="ai-send-btn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div id="ai-typing" class="ai-typing" style="display: none;">
+            <div class="ai-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="ai-typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="/ai-assistant.css">
+<script src="/ai-assistant.js"></script>
+

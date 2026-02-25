@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Worker - JobConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/track-worker.css">
+    <link rel="stylesheet" href="/dark-mode.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='/'">
+                <i class="fas fa-briefcase"></i>
+                <span>JobConnect</span>
+            </div>
+            <a href="/my-jobs" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back to My Jobs
+            </a>
+        </div>
+    </nav>
+
+    <!-- Tracking Container -->
+    <div class="tracking-container">
+        <!-- Worker Info Card -->
+        <div class="worker-info-card">
+            <div class="worker-header">
+                <div class="worker-avatar">
+                    <i class="fas fa-user-hard-hat"></i>
+                </div>
+                <div class="worker-details">
+                    <h2 id="worker-name">Loading...</h2>
+                    <p id="worker-category"><i class="fas fa-tools"></i> Category</p>
+                    <p id="worker-phone"><i class="fas fa-phone"></i> Phone</p>
+                </div>
+                <div class="worker-status">
+                    <span class="status-badge" id="status-badge">
+                        <i class="fas fa-circle"></i> On the way
+                    </span>
+                </div>
+            </div>
+
+            <!-- ETA Info -->
+            <div class="eta-info">
+                <div class="eta-item">
+                    <i class="fas fa-clock"></i>
+                    <div>
+                        <h3 id="eta-time">Calculating...</h3>
+                        <p>Estimated Arrival</p>
+                    </div>
+                </div>
+                <div class="eta-item">
+                    <i class="fas fa-route"></i>
+                    <div>
+                        <h3 id="distance">-- km</h3>
+                        <p>Distance</p>
+                    </div>
+                </div>
+                <div class="eta-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <div>
+                        <h3 id="speed">-- km/h</h3>
+                        <p>Current Speed</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job Details -->
+            <div class="job-details-section">
+                <h3>Job Details</h3>
+                <div class="job-info">
+                    <p><strong>Job:</strong> <span id="job-title">Loading...</span></p>
+                    <p><strong>Location:</strong> <span id="job-location">Loading...</span></p>
+                    <p><strong>Scheduled:</strong> <span id="job-time">Loading...</span></p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn-call" onclick="callWorker()">
+                    <i class="fas fa-phone"></i>
+                    Call Worker
+                </button>
+                <button class="btn-message" onclick="messageWorker()">
+                    <i class="fas fa-comment"></i>
+                    Send Message
+                </button>
+            </div>
+        </div>
+
+        <!-- Map Container -->
+        <div class="map-container">
+            <div id="map"></div>
+            
+            <!-- Map Controls -->
+            <div class="map-controls">
+                <button class="map-btn" onclick="centerOnWorker()" title="Center on Worker">
+                    <i class="fas fa-crosshairs"></i>
+                </button>
+                <button class="map-btn" onclick="centerOnDestination()" title="Center on Destination">
+                    <i class="fas fa-map-marker-alt"></i>
+                </button>
+                <button class="map-btn" onclick="showFullRoute()" title="Show Full Route">
+                    <i class="fas fa-route"></i>
+                </button>
+            </div>
+
+            <!-- Live Indicator -->
+            <div class="live-indicator">
+                <span class="pulse"></span>
+                <span>LIVE</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Assistant Widget -->
+    <script>
+        fetch('/ai-assistant.html')
+            .then(response => response.text())
+            .then(html => {
+                document.body.insertAdjacentHTML('beforeend', html);
+            });
+    </script>
+
+    <!-- Google Maps API -->
+    <!-- Replace AIzaSyBkNaAGLEVq0YLQMi-PQ_zxQGzCkXdqU with your actual Google Maps API key -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkNaAGLEVq0YLQMi-PQ_zxQGzCkXdqU&libraries=geometry,places&region=IN&language=en"></script>
+    <script src="/track-worker.js"></script>
+    <script src="/dark-mode.js"></script>
+</body>
+</html>
+
