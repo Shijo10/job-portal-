@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Jobs - JobConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/browse-jobs.css">
+    <link rel="stylesheet" href="/dark-mode.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='/'">
+                <i class="fas fa-briefcase"></i>
+                <span>JobConnect</span>
+            </div>
+            <div class="nav-links" id="nav-links">
+                <a href="/" class="nav-link">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="/browse-workers" class="nav-link">
+                    <i class="fas fa-users"></i> Browse Workers
+                </a>
+                <a href="/browse-jobs" class="nav-link active">
+                    <i class="fas fa-briefcase"></i> Browse Jobs
+                </a>
+                <a href="/post-job" class="nav-link">
+                    <i class="fas fa-plus-circle"></i> Post a Job
+                </a>
+                <!-- Dashboard link will be added here if logged in -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <h1><i class="fas fa-search"></i> Find Your Next Job</h1>
+            <p>Browse through available job opportunities and apply today</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input" placeholder="Search jobs by title, description, or location...">
+            </div>
+
+            <div class="filter-group">
+                <label><i class="fas fa-tag"></i> Category</label>
+                <select id="category-filter">
+                    <option value="all">All Categories</option>
+                    <option value="Plumbing">Plumbing</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="Carpentry">Carpentry</option>
+                    <option value="Painting">Painting</option>
+                    <option value="Cleaning">Cleaning</option>
+                    <option value="Landscaping">Landscaping</option>
+                    <option value="HVAC">HVAC</option>
+                    <option value="Roofing">Roofing</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label><i class="fas fa-map-marker-alt"></i> Location</label>
+                <input type="text" id="location-filter" placeholder="Enter location...">
+            </div>
+
+            <div class="filter-group">
+                <label><i class="fas fa-rupee-sign"></i> Budget Range</label>
+                <select id="budget-filter">
+                    <option value="all">All Budgets</option>
+                    <option value="0-5000">₹0 - ₹5,000</option>
+                    <option value="5000-10000">₹5,000 - ₹10,000</option>
+                    <option value="10000-25000">₹10,000 - ₹25,000</option>
+                    <option value="25000-50000">₹25,000 - ₹50,000</option>
+                    <option value="50000+">₹50,000+</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label><i class="fas fa-flag"></i> Priority</label>
+                <select id="priority-filter">
+                    <option value="all">All Priorities</option>
+                    <option value="urgent">Urgent</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label><i class="fas fa-filter"></i> Sort By</label>
+                <select id="sort-filter">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="budget-high">Highest Budget</option>
+                    <option value="budget-low">Lowest Budget</option>
+                    <option value="priority">Priority</option>
+                </select>
+            </div>
+
+            <button id="clear-filters" class="btn-clear">
+                <i class="fas fa-times"></i> Clear Filters
+            </button>
+        </div>
+
+        <!-- Results Header -->
+        <div class="results-header">
+            <h2><span id="job-count">0</span> Jobs Available</h2>
+            <div class="view-toggle">
+                <button class="view-btn active" data-view="grid">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button class="view-btn" data-view="list">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Jobs Grid -->
+        <div id="jobs-container" class="jobs-grid">
+            <!-- Loading State -->
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading jobs...</p>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <i class="fas fa-briefcase"></i>
+            <h3>No Jobs Found</h3>
+            <p>No jobs match your search criteria. Try adjusting your filters.</p>
+        </div>
+    </div>
+
+    <!-- AI Assistant Widget -->
+    <script>
+        fetch('/ai-assistant.html')
+            .then(response => response.text())
+            .then(html => {
+                document.body.insertAdjacentHTML('beforeend', html);
+            });
+    </script>
+
+    <script src="/browse-jobs.js"></script>
+    <script src="/dark-mode.js"></script>
+</body>
+</html>
+

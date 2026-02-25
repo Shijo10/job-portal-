@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post a Job - Job Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="post-job.css">
+    <link rel="stylesheet" href="/dark-mode.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-briefcase"></i>
+                <span>Job Portal</span>
+            </div>
+            <div class="nav-user">
+                <button onclick="window.location.href='/my-jobs'" class="btn-my-jobs" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; margin-right: 15px; font-weight: 600; transition: all 0.3s ease;">
+                    <i class="fas fa-list-check"></i> My Jobs
+                </button>
+                <i class="fas fa-user-circle"></i>
+                <span id="customer-name">Customer</span>
+                <button id="logout-btn" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="page-header">
+            <h1>
+                <i class="fas fa-plus-circle"></i>
+                Post a New Job
+            </h1>
+            <p>Fill in the details below to post your job requirement</p>
+        </div>
+
+        <form id="jobForm" class="job-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="title">
+                        <i class="fas fa-heading"></i>
+                        Job Title *
+                    </label>
+                    <input 
+                        type="text" 
+                        id="title" 
+                        name="title" 
+                        placeholder="e.g., Fix Kitchen Sink Leak"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="category">
+                        <i class="fas fa-tags"></i>
+                        Category *
+                    </label>
+                    <select id="category" name="category" required>
+                        <option value="">Select Category</option>
+                        <option value="Plumbing">Plumbing</option>
+                        <option value="Electrical">Electrical</option>
+                        <option value="Carpentry">Carpentry</option>
+                        <option value="Painting">Painting</option>
+                        <option value="Cleaning">Cleaning</option>
+                        <option value="Landscaping">Landscaping</option>
+                        <option value="HVAC">HVAC</option>
+                        <option value="Roofing">Roofing</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">
+                    <i class="fas fa-align-left"></i>
+                    Job Description *
+                </label>
+                <textarea 
+                    id="description" 
+                    name="description" 
+                    rows="5"
+                    placeholder="Describe the work you need done in detail..."
+                    required
+                ></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Location *
+                    </label>
+                    <input 
+                        type="text" 
+                        id="location" 
+                        name="location" 
+                        placeholder="e.g., Bangalore, Karnataka"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="budget">
+                        <i class="fas fa-rupee-sign"></i>
+                        Budget (₹) *
+                    </label>
+                    <input
+                        type="number"
+                        id="budget"
+                        name="budget"
+                        placeholder="Enter your budget"
+                        min="100"
+                        required
+                    >
+                </div>
+            </div>
+
+            <!-- Bidding Options -->
+            <div class="bidding-options">
+                <div class="bidding-toggle">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="bidding-enabled" checked>
+                        <span class="toggle-slider"></span>
+                        <span class="toggle-text">
+                            <i class="fas fa-gavel"></i>
+                            Enable Bidding (Workers can submit competitive bids)
+                        </span>
+                    </label>
+                </div>
+
+                <div id="bidding-fields" class="bidding-fields">
+                    <p class="bidding-info">
+                        <i class="fas fa-info-circle"></i>
+                        When bidding is enabled, the budget you entered above becomes the maximum budget. You can also set a minimum budget.
+                    </p>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="min-budget">
+                                <i class="fas fa-arrow-down"></i>
+                                Minimum Budget (₹)
+                            </label>
+                            <input
+                                type="number"
+                                id="min-budget"
+                                name="minBudget"
+                                placeholder="Optional minimum"
+                                min="100"
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="max-budget">
+                                <i class="fas fa-arrow-up"></i>
+                                Maximum Budget (₹)
+                            </label>
+                            <input
+                                type="number"
+                                id="max-budget"
+                                name="maxBudget"
+                                placeholder="Will use budget above"
+                                min="100"
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="duration">
+                        <i class="fas fa-clock"></i>
+                        Expected Duration
+                    </label>
+                    <input 
+                        type="text" 
+                        id="duration" 
+                        name="duration" 
+                        placeholder="e.g., 2-3 hours, 1 day, 1 week"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="priority">
+                        <i class="fas fa-exclamation-circle"></i>
+                        Priority *
+                    </label>
+                    <select id="priority" name="priority" required>
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                        <option value="urgent">Urgent</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="deadline">
+                    <i class="fas fa-calendar"></i>
+                    Deadline (Optional)
+                </label>
+                <input 
+                    type="date" 
+                    id="deadline" 
+                    name="deadline"
+                >
+            </div>
+
+            <div id="error-message" class="error-message"></div>
+            <div id="success-message" class="success-message"></div>
+
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" onclick="window.location.href='/'">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </button>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-paper-plane"></i>
+                    Post Job
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script src="/post-job.js"></script>
+    <script src="/dark-mode.js"></script>
+</body>
+</html>
+

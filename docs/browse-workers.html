@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Workers - JobConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/browse-workers.css">
+    <link rel="stylesheet" href="/dark-mode.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo-container">
+                <div class="logo-icon">💼</div>
+                <span class="logo-text">JobConnect</span>
+            </div>
+            <div class="nav-buttons" id="nav-buttons">
+                <a href="/" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </a>
+                <!-- Dashboard link will be added here if logged in -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">Find Skilled Workers</h1>
+            <p class="hero-subtitle">Browse through our talented professionals across different categories</p>
+            
+            <!-- Search Bar -->
+            <div class="search-container">
+                <div class="search-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="search-input" placeholder="Search by name, skill, or location..." class="search-input">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Filter -->
+    <section class="categories-section">
+        <div class="container">
+            <div class="categories-scroll">
+                <button class="category-btn active" data-category="all">
+                    <i class="fas fa-th"></i>
+                    <span>All Workers</span>
+                </button>
+                <button class="category-btn" data-category="Plumbing">
+                    <i class="fas fa-wrench"></i>
+                    <span>Plumbing</span>
+                </button>
+                <button class="category-btn" data-category="Electrical">
+                    <i class="fas fa-bolt"></i>
+                    <span>Electrical</span>
+                </button>
+                <button class="category-btn" data-category="Carpentry">
+                    <i class="fas fa-hammer"></i>
+                    <span>Carpentry</span>
+                </button>
+                <button class="category-btn" data-category="Painting">
+                    <i class="fas fa-paint-roller"></i>
+                    <span>Painting</span>
+                </button>
+                <button class="category-btn" data-category="Cleaning">
+                    <i class="fas fa-broom"></i>
+                    <span>Cleaning</span>
+                </button>
+                <button class="category-btn" data-category="Landscaping">
+                    <i class="fas fa-leaf"></i>
+                    <span>Landscaping</span>
+                </button>
+                <button class="category-btn" data-category="HVAC">
+                    <i class="fas fa-fan"></i>
+                    <span>HVAC</span>
+                </button>
+                <button class="category-btn" data-category="Roofing">
+                    <i class="fas fa-home"></i>
+                    <span>Roofing</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Workers Grid -->
+    <section class="workers-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 id="results-count">Loading workers...</h2>
+                <div class="sort-dropdown">
+                    <select id="sort-select">
+                        <option value="rating">Highest Rated</option>
+                        <option value="experience">Most Experienced</option>
+                        <option value="rate-low">Lowest Rate</option>
+                        <option value="rate-high">Highest Rate</option>
+                        <option value="recent">Recently Joined</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="workers-grid" class="workers-grid">
+                <!-- Workers will be loaded here dynamically -->
+            </div>
+
+            <div id="no-results" class="no-results" style="display: none;">
+                <i class="fas fa-search"></i>
+                <h3>No workers found</h3>
+                <p>Try adjusting your search or filters</p>
+            </div>
+
+            <div id="loading" class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading workers...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2026 JobConnect. Created by <strong>Shivananda P</strong> and <strong>Shijo Antony</strong></p>
+        </div>
+    </footer>
+
+    <!-- AI Assistant Widget -->
+    <script>
+        fetch('/ai-assistant.html')
+            .then(response => response.text())
+            .then(html => {
+                document.body.insertAdjacentHTML('beforeend', html);
+            });
+    </script>
+
+    <script src="/browse-workers.js"></script>
+    <script src="/dark-mode.js"></script>
+</body>
+</html>
+

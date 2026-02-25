@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Job - JobConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/apply-job.css">
+    <link rel="stylesheet" href="/dark-mode.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='/'">
+                <i class="fas fa-briefcase"></i>
+                <span>JobConnect</span>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    Home
+                </a>
+                <a href="/browse-jobs" class="nav-link">
+                    <i class="fas fa-search"></i>
+                    Browse Jobs
+                </a>
+                <a href="/worker-dashboard" class="nav-link">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+            </div>
+            <div class="nav-right">
+                <span class="welcome-text">Welcome, <strong id="worker-name">Worker</strong></span>
+                <button class="btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Application Container -->
+    <div class="application-container">
+        <div class="application-card">
+            <div class="application-header">
+                <i class="fas fa-gavel"></i>
+                <h1>Submit Your Bid</h1>
+                <p>Place your bid for this job opportunity</p>
+            </div>
+
+            <!-- Job Details -->
+            <div class="job-details-section">
+                <h2><i class="fas fa-briefcase"></i> Job Details</h2>
+                <div class="job-info">
+                    <div class="info-row">
+                        <span class="info-label">Job Title:</span>
+                        <span class="info-value" id="job-title">Loading...</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Customer:</span>
+                        <span class="info-value" id="job-customer">Loading...</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Location:</span>
+                        <span class="info-value" id="job-location">Loading...</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Budget:</span>
+                        <span class="info-value" id="job-budget">Loading...</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Description:</span>
+                        <span class="info-value" id="job-description">Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bidding Form -->
+            <form id="application-form" class="application-form">
+                <h2><i class="fas fa-gavel"></i> Place Your Bid</h2>
+
+                <div class="bid-info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Enter your competitive bid amount for this job. The customer will review all bids and select the best offer.</p>
+                </div>
+
+                <div class="form-group bid-amount-group">
+                    <label for="proposed-rate">Your Bid Amount (₹) <span class="required">*</span></label>
+                    <div class="input-wrapper bid-input">
+                        <i class="fas fa-rupee-sign input-icon"></i>
+                        <input
+                            type="number"
+                            id="proposed-rate"
+                            name="proposedRate"
+                            placeholder="Enter your bid amount"
+                            min="100"
+                            step="50"
+                            required
+                        >
+                    </div>
+                    <small id="budget-hint" class="budget-hint"></small>
+                </div>
+
+                <div class="form-group">
+                    <label for="estimated-duration">Estimated Completion Time <span class="required">*</span></label>
+                    <select id="estimated-duration" name="estimatedDuration" required>
+                        <option value="">Select duration</option>
+                        <option value="1-2 hours">1-2 hours</option>
+                        <option value="3-5 hours">3-5 hours</option>
+                        <option value="1 day">1 day</option>
+                        <option value="2-3 days">2-3 days</option>
+                        <option value="1 week">1 week</option>
+                        <option value="2+ weeks">2+ weeks</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="availability">Available to Start <span class="required">*</span></label>
+                    <input
+                        type="date"
+                        id="availability"
+                        name="availability"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="cover-letter">Why should you be hired? <span class="required">*</span></label>
+                    <textarea
+                        id="cover-letter"
+                        name="coverLetter"
+                        rows="4"
+                        placeholder="Briefly explain your experience and why you're the best choice for this job..."
+                        required
+                    ></textarea>
+                    <small>Minimum 50 characters</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="additional-notes">Additional Notes (Optional)</label>
+                    <textarea
+                        id="additional-notes"
+                        name="additionalNotes"
+                        rows="3"
+                        placeholder="Any additional information..."
+                    ></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="window.history.back()">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-gavel"></i>
+                        Submit Bid
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2026 JobConnect. Created by <strong>Shivananda P</strong> and <strong>Shijo Antony</strong></p>
+        </div>
+    </footer>
+
+    <!-- AI Assistant Widget -->
+    <script>
+        fetch('/ai-assistant.html')
+            .then(response => response.text())
+            .then(html => {
+                document.body.insertAdjacentHTML('beforeend', html);
+            });
+    </script>
+
+    <script src="/apply-job.js"></script>
+    <script src="/dark-mode.js"></script>
+</body>
+</html>
+

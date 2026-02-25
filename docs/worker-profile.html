@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Profile - JobConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/worker-profile.css">
+    <link rel="stylesheet" href="/dark-mode.css">
+    <!-- Leaflet CSS for maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo-container">
+                <div class="logo-icon">💼</div>
+                <span class="logo-text">JobConnect</span>
+            </div>
+            <div class="nav-buttons">
+                <a href="/browse-workers" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Back to Browse
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Loading State -->
+    <div id="loading" class="loading">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Loading profile...</p>
+    </div>
+
+    <!-- Profile Content -->
+    <div id="profile-content" style="display: none;">
+        <!-- Hero Section -->
+        <section class="profile-hero">
+            <div class="container">
+                <div class="profile-header">
+                    <div class="profile-avatar" id="worker-avatar"></div>
+                    <div class="profile-info">
+                        <h1 id="worker-name"></h1>
+                        <div class="profile-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span id="worker-location"></span>
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-briefcase"></i>
+                                <span id="worker-experience"></span> years experience
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-rupee-sign"></i>
+                                ₹<span id="worker-rate"></span>/hour
+                            </span>
+                        </div>
+                        <div class="profile-rating">
+                            <div class="stars" id="worker-stars"></div>
+                            <span class="rating-value" id="worker-rating"></span>
+                            <span class="rating-count">(<span id="completed-jobs"></span> jobs completed)</span>
+                        </div>
+                        <div class="availability-badge" id="worker-availability"></div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="btn-primary" id="contact-worker-btn">
+                            <i class="fas fa-envelope"></i>
+                            Contact Worker
+                        </button>
+                        <button class="btn-secondary" id="hire-worker-btn">
+                            <i class="fas fa-briefcase"></i>
+                            Hire Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <section class="profile-main">
+            <div class="container">
+                <div class="profile-grid">
+                    <!-- Left Column -->
+                    <div class="profile-left">
+                        <!-- Skills Section -->
+                        <div class="profile-card">
+                            <h2 class="card-title">
+                                <i class="fas fa-tools"></i>
+                                Skills & Expertise
+                            </h2>
+                            <div class="skills-list" id="worker-skills"></div>
+                        </div>
+
+                        <!-- Stats Section -->
+                        <div class="profile-card">
+                            <h2 class="card-title">
+                                <i class="fas fa-chart-line"></i>
+                                Performance Stats
+                            </h2>
+                            <div class="stats-grid">
+                                <div class="stat-box">
+                                    <i class="fas fa-check-circle"></i>
+                                    <div class="stat-info">
+                                        <span class="stat-value" id="stat-completed"></span>
+                                        <span class="stat-label">Jobs Completed</span>
+                                    </div>
+                                </div>
+                                <div class="stat-box">
+                                    <i class="fas fa-star"></i>
+                                    <div class="stat-info">
+                                        <span class="stat-value" id="stat-rating"></span>
+                                        <span class="stat-label">Average Rating</span>
+                                    </div>
+                                </div>
+                                <div class="stat-box">
+                                    <i class="fas fa-clock"></i>
+                                    <div class="stat-info">
+                                        <span class="stat-value" id="stat-experience"></span>
+                                        <span class="stat-label">Years Experience</span>
+                                    </div>
+                                </div>
+                                <div class="stat-box">
+                                    <i class="fas fa-badge-check"></i>
+                                    <div class="stat-info">
+                                        <span class="stat-value" id="stat-verified"></span>
+                                        <span class="stat-label">Verified</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Info -->
+                        <div class="profile-card">
+                            <h2 class="card-title">
+                                <i class="fas fa-address-card"></i>
+                                Contact Information
+                            </h2>
+                            <div class="contact-info">
+                                <div class="contact-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <span id="worker-email"></span>
+                                </div>
+                                <div class="contact-item">
+                                    <i class="fas fa-phone"></i>
+                                    <span id="worker-phone"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Location Map -->
+                        <div class="profile-card">
+                            <h2 class="card-title">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Location
+                            </h2>
+                            <div id="map" class="location-map"></div>
+                            <div class="location-address">
+                                <i class="fas fa-location-dot"></i>
+                                <span id="worker-location-full"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="profile-right">
+                        <!-- Job History -->
+                        <div class="profile-card">
+                            <h2 class="card-title">
+                                <i class="fas fa-history"></i>
+                                Job History
+                            </h2>
+                            <div id="job-history" class="job-history"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="/worker-profile.js"></script>
+    <script src="/dark-mode.js"></script>
+</body>
+</html>
+
