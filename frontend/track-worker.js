@@ -182,7 +182,7 @@ function showFullRoute() {
 
 // Action functions
 function callWorker() {
-    window.location.href = `tel:${workerData.phone}`;
+    window.location.href = `tel: ${workerData.phone}`;
 }
 
 function messageWorker() {

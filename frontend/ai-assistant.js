@@ -1,5 +1,5 @@
 // AI Assistant functionality
-document.addEventListener('DOMContentLoaded', () => {
+function initAIAssistant() {
     const assistantBtn = document.getElementById('ai-assistant-btn');
     const assistantWindow = document.getElementById('ai-assistant-window');
     const closeBtn = document.getElementById('ai-close-btn');
@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('ai-input');
     const messagesContainer = document.getElementById('ai-messages');
     const typingIndicator = document.getElementById('ai-typing');
+
+    if (!assistantBtn) return; // Prevent errors if not found
 
     // Toggle chat window
     assistantBtn.addEventListener('click', () => {
@@ -32,7 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
             sendAIMessage();
         }
     });
-});
+}
+
+// Global initialization function
+window.initAIAssistant = initAIAssistant;
 
 // Send message to AI
 async function sendAIMessage(predefinedMessage = null) {

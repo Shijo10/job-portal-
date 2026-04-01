@@ -68,28 +68,28 @@ function logout() {
 function setupEventListeners() {
     // Search input
     document.getElementById('search-input').addEventListener('input', applyFilters);
-    
+
     // Filter dropdowns
     document.getElementById('category-filter').addEventListener('change', applyFilters);
     document.getElementById('budget-filter').addEventListener('change', applyFilters);
     document.getElementById('priority-filter').addEventListener('change', applyFilters);
     document.getElementById('sort-filter').addEventListener('change', applyFilters);
-    
+
     // Location filter
     document.getElementById('location-filter').addEventListener('input', applyFilters);
-    
+
     // Clear filters button
     document.getElementById('clear-filters').addEventListener('click', clearFilters);
-    
+
     // View toggle
     document.querySelectorAll('.view-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
             e.target.classList.add('active');
-            
+
             const view = e.target.dataset.view;
             const container = document.getElementById('jobs-container');
-            
+
             if (view === 'list') {
                 container.classList.add('list-view');
             } else {
@@ -102,17 +102,17 @@ function setupEventListeners() {
 // Load jobs from API
 async function loadJobs() {
     try {
-        const response = await fetch('http://localhost:3000/api/jobs');
+        const response = await fetch('/api/jobs');
         if (!response.ok) throw new Error('Failed to fetch jobs');
-        
+
         const jobs = await response.json();
-        
+
         // Filter only open jobs (not assigned, in-progress, completed, or cancelled)
         allJobs = jobs.filter(job => job.status === 'open');
-        
+
         // Apply filters and display
         applyFilters();
-        
+
     } catch (error) {
         console.error('Error loading jobs:', error);
         document.getElementById('jobs-container').innerHTML = `
@@ -132,18 +132,18 @@ function applyFilters() {
     const priority = document.getElementById('priority-filter').value;
     const location = document.getElementById('location-filter').value.toLowerCase();
     const sortBy = document.getElementById('sort-filter').value;
-    
+
     // Filter jobs
     filteredJobs = allJobs.filter(job => {
         // Search filter
-        const matchesSearch = !searchTerm || 
+        const matchesSearch = !searchTerm ||
             job.title.toLowerCase().includes(searchTerm) ||
             job.description.toLowerCase().includes(searchTerm) ||
             job.location.toLowerCase().includes(searchTerm);
-        
+
         // Category filter
         const matchesCategory = category === 'all' || job.category === category;
-        
+
         // Budget filter
         let matchesBudget = true;
         if (budgetRange !== 'all') {
@@ -154,19 +154,19 @@ function applyFilters() {
                 matchesBudget = job.budget >= min && job.budget <= max;
             }
         }
-        
+
         // Priority filter
         const matchesPriority = priority === 'all' || job.priority === priority;
-        
+
         // Location filter
         const matchesLocation = !location || job.location.toLowerCase().includes(location);
-        
+
         return matchesSearch && matchesCategory && matchesBudget && matchesPriority && matchesLocation;
     });
-    
+
     // Sort jobs
     sortJobs(filteredJobs, sortBy);
-    
+
     // Display jobs
     displayJobs(filteredJobs);
 }
@@ -174,7 +174,7 @@ function applyFilters() {
 // Sort jobs
 function sortJobs(jobs, sortBy) {
     const priorityOrder = { urgent: 4, high: 3, medium: 2, low: 1 };
-    
+
     switch (sortBy) {
         case 'newest':
             jobs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -199,16 +199,16 @@ function displayJobs(jobs) {
     const container = document.getElementById('jobs-container');
     const emptyState = document.getElementById('empty-state');
     const jobCount = document.getElementById('job-count');
-    
+
     // Update count
     jobCount.textContent = jobs.length;
-    
+
     if (jobs.length === 0) {
         container.innerHTML = '';
         emptyState.style.display = 'block';
         return;
     }
-    
+
     emptyState.style.display = 'none';
     container.innerHTML = jobs.map(job => createJobCard(job)).join('');
 }
@@ -302,9 +302,21 @@ function createJobCard(job) {
                     <i class="fas fa-clock"></i>
                     Posted on ${createdDate}
                 </div>
-                <button class="btn-apply" onclick="applyForJob('${job._id}', '${job.title}')">
-                    <i class="fas fa-gavel"></i> ${job.biddingEnabled ? 'Place Bid' : 'Apply Now'}
+                ${job.biddingEnabled ? `
+                <div class="simple-bid-container" style="display: flex; flex-direction: column; gap: 5px; width: 100%; margin-top: 10px;">
+                    <small style="color: #666;">Customer Budget: <strong>${budgetDisplay}</strong></small>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" id="bid-amount-${job._id}" placeholder="Your Bid (₹)" class="form-control" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" min="0">
+                        <button class="btn-primary" onclick="submitSimpleBid('${job._id}')" style="padding: 8px 16px;">
+                            <i class="fas fa-gavel"></i> Place Bid
+                        </button>
+                    </div>
+                </div>
+                ` : `
+                <button class="btn-apply" onclick="applyForJob('${job._id}', '${job.title}')" style="width: 100%; margin-top: 10px;">
+                    <i class="fas fa-briefcase"></i> Apply Now
                 </button>
+                `}
             </div>
         </div>
     `;
@@ -339,3 +351,60 @@ function clearFilters() {
     applyFilters();
 }
 
+
+
+// Simple Bid System Submission
+async function submitSimpleBid(jobId) {
+    const workerId = sessionStorage.getItem('workerId');
+    if (!workerId) {
+        if (confirm('Please login as a worker to place a bid. Login now?')) {
+            window.location.href = '/worker-login';
+        }
+        return;
+    }
+
+    const bidInput = document.getElementById(`bid-amount-${jobId}`);
+    if (!bidInput || !bidInput.value) {
+        alert('Please enter your bid amount.');
+        return;
+    }
+    const amount = parseFloat(bidInput.value);
+
+    try {
+        const workerResponse = await fetch(`/api/workers/${workerId}`);
+        const worker = await workerResponse.json();
+
+        const bidData = {
+            jobId: jobId,
+            workerId: worker._id,
+            workerName: worker.name,
+            workerEmail: worker.email,
+            workerPhone: worker.phone,
+            workerExperience: worker.experience,
+            workerRating: worker.rating,
+            bidAmount: amount,
+            estimatedDuration: 'To be discussed',
+            coverLetter: 'This is a quick bid placed directly from the job board. I am fully available and ready to start immediately. Please review my profile for details.',
+            availability: new Date().toISOString().split('T')[0],
+            additionalNotes: '',
+            status: 'pending'
+        };
+
+        const response = await fetch('/api/bids', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(bidData)
+        });
+
+        if (response.ok) {
+            alert('Bid placed successfully!');
+            bidInput.value = '';
+        } else {
+            const err = await response.json();
+            alert(err.message || 'Failed to place bid');
+        }
+    } catch (e) {
+        console.error(e);
+        alert('Error placing bid');
+    }
+}

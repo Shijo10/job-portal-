@@ -73,7 +73,7 @@
                         <input type="checkbox" id="remember-me">
                         <span>Remember me</span>
                     </label>
-                    <a href="#" class="forgot-password">Forgot Password?</a>
+                    <a href="/forgot-password" class="forgot-password">Forgot Password?</a>
                 </div>
 
                 <button type="submit" class="btn-login">
@@ -140,6 +140,10 @@
             .then(response => response.text())
             .then(html => {
                 document.body.insertAdjacentHTML('beforeend', html);
+                const script = document.createElement('script');
+                script.src = '/ai-assistant.js';
+                script.onload = () => window.initAIAssistant && window.initAIAssistant();
+                document.body.appendChild(script);
             });
     </script>
 

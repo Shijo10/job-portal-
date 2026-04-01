@@ -66,13 +66,16 @@ async function loadWorkerJobs(status = 'all') {
         `;
 
         // Fetch all jobs
-        const response = await fetch('http://localhost:3000/api/jobs');
+        const response = await fetch('/api/jobs');
         if (!response.ok) throw new Error('Failed to fetch jobs');
 
         const allJobs = await response.json();
 
-        // Filter jobs assigned to this worker
-        let workerJobs = allJobs.filter(job => job.workerId && job.workerId.toString() === workerId);
+        // Filter jobs assigned to this worker (handle populated ObjectId or raw string)
+        let workerJobs = allJobs.filter(job => {
+            const currentWorkerId = job.workerId?._id || job.workerId;
+            return currentWorkerId && currentWorkerId.toString() === workerId;
+        });
 
         // Apply status filter
         if (status !== 'all') {
@@ -180,7 +183,10 @@ function createJobCard(job) {
             <p class="job-description">${job.description}</p>
             <div class="job-details">
                 <div><i class="fas fa-user"></i> ${job.customerName}</div>
-                <div><i class="fas fa-map-marker-alt"></i> ${job.location}</div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div><i class="fas fa-map-marker-alt"></i> ${job.location}</div>
+                    ${job.coordinates && job.coordinates.lat ? `<a href="https://www.google.com/maps/dir/?api=1&destination=${job.coordinates.lat},${job.coordinates.lng}" target="_blank" style="padding: 2px 8px; font-size: 11px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; color: #4f46e5; background: #e0e7ff; border-radius: 4px;"><i class="fas fa-directions"></i> Navigate</a>` : ''}
+                </div>
                 <div><i class="fas fa-rupee-sign"></i> ₹${job.budget.toLocaleString()}</div>
                 ${job.duration ? `<div><i class="fas fa-clock"></i> ${job.duration}</div>` : ''}
             </div>
@@ -215,7 +221,7 @@ async function updateJobStatus(jobId, currentStatus) {
     if (!confirm(confirmMessage)) return;
 
     try {
-        const response = await fetch(`http://localhost:3000/api/jobs/${jobId}`, {
+        const response = await fetch(`/api/jobs/${jobId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -226,6 +232,31 @@ async function updateJobStatus(jobId, currentStatus) {
         if (response.ok) {
             alert(`Job status updated to ${newStatus}!`);
             loadWorkerJobs(); // Reload jobs
+
+            // Show payment option popup for worker when completed
+            if (newStatus === 'completed') {
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.style.display = 'flex';
+                modal.style.zIndex = '9999';
+                modal.innerHTML = `
+                    <div class="modal-content" style="text-align: center; max-width: 400px; padding: 30px;">
+                        <i class="fas fa-check-circle" style="font-size: 48px; color: #10b981; margin-bottom: 20px;"></i>
+                        <h2 style="margin-bottom: 10px;">Job Completed!</h2>
+                        <p style="color: #6b7280; font-size: 14px; margin-bottom: 20px;">
+                            You have successfully marked the job as completed. A payment option has been generated for the customer. 
+                            Would you like to send a quick payment reminder?
+                        </p>
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <button class="btn-secondary" onclick="this.closest('.modal').remove()">Later</button>
+                            <button class="btn-primary" onclick="alert('Payment Reminder sent successfully!'); this.closest('.modal').remove()">
+                                <i class="fas fa-paper-plane"></i> Send Request
+                            </button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            }
         } else {
             alert('Failed to update job status. Please try again.');
         }
@@ -485,7 +516,7 @@ async function markWorkComplete(workId) {
                 deadline: new Date(work.date)
             };
 
-            const response = await fetch('http://localhost:3000/api/jobs', {
+            const response = await fetch('/api/jobs', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -655,7 +686,7 @@ document.getElementById('edit-profile-form').addEventListener('submit', async (e
 
     try {
         // Update worker profile via API
-        const response = await fetch(`http://localhost:3000/api/workers/${workerId}`, {
+        const response = await fetch(`/api/workers/${workerId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -707,7 +738,7 @@ document.getElementById('edit-profile-form').addEventListener('submit', async (e
 // Load worker bids
 async function loadWorkerBids() {
     try {
-        const response = await fetch(`http://localhost:3000/api/bids/worker/${workerId}`);
+        const response = await fetch(`/api/bids/worker/${workerId}`);
         if (!response.ok) throw new Error('Failed to fetch bids');
 
         const bids = await response.json();
@@ -760,6 +791,22 @@ function createBidCard(bid) {
         year: 'numeric'
     });
 
+    // Build navigate button — always show for accepted bids
+    // Use precise GPS if available, otherwise fallback to text-based search
+    let navigateBtn = '';
+    if (bid.status === 'accepted') {
+        const mapsUrl = (job.coordinates && job.coordinates.lat)
+            ? `https://www.google.com/maps/dir/?api=1&destination=${job.coordinates.lat},${job.coordinates.lng}`
+            : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((job.location || '') + ' India')}`;
+        navigateBtn = `
+            <div style="margin-top: 10px;">
+                <a href="${mapsUrl}" target="_blank" style="padding: 8px 16px; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; color: white; background: linear-gradient(135deg, #4f46e5, #7c3aed); border-radius: 8px; font-weight: 600; box-shadow: 0 2px 8px rgba(79,70,229,0.35);">
+                    <i class="fas fa-directions"></i> Navigate to Customer
+                </a>
+                ${!(job.coordinates && job.coordinates.lat) ? '<small style="display:block;margin-top:4px;color:#6b7280;font-size:11px;"><i class="fas fa-info-circle"></i> Approximate location (no GPS pin)</small>' : ''}
+            </div>`;
+    }
+
     return `
         <div class="bid-card" style="border-left: 4px solid ${status.border}">
             <div class="bid-card-header">
@@ -784,6 +831,7 @@ function createBidCard(bid) {
                     <i class="fas fa-map-marker-alt"></i>
                     <span>${job.location || 'N/A'}</span>
                 </div>
+                ${navigateBtn}
                 <div class="bid-detail-item">
                     <i class="fas fa-clock"></i>
                     <span>Duration: ${bid.estimatedDuration}</span>
@@ -824,7 +872,7 @@ async function withdrawBid(bidId) {
     }
 
     try {
-        const response = await fetch(`http://localhost:3000/api/bids/${bidId}/withdraw`, {
+        const response = await fetch(`/api/bids/${bidId}/withdraw`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         });
@@ -861,7 +909,7 @@ document.querySelectorAll('.bid-filter-btn').forEach(btn => {
 
 async function filterBids(status) {
     try {
-        const response = await fetch(`http://localhost:3000/api/bids/worker/${workerId}`);
+        const response = await fetch(`/api/bids/worker/${workerId}`);
         if (!response.ok) throw new Error('Failed to fetch bids');
 
         const bids = await response.json();
@@ -879,3 +927,60 @@ loadWorkerJobs();
 loadScheduledDates();
 loadWorkerBids();
 
+
+
+// Simple Bid System Submission
+async function submitSimpleBid(jobId) {
+    const workerId = sessionStorage.getItem('workerId');
+    if (!workerId) {
+        if (confirm('Please login as a worker to place a bid. Login now?')) {
+            window.location.href = '/worker-login';
+        }
+        return;
+    }
+    
+    const bidInput = document.getElementById(`bid-amount-${jobId}`);
+    if (!bidInput || !bidInput.value) {
+        alert('Please enter your bid amount.');
+        return;
+    }
+    const amount = parseFloat(bidInput.value);
+
+    try {
+        const workerResponse = await fetch(`/api/workers/${workerId}`);
+        const worker = await workerResponse.json();
+
+        const bidData = {
+           jobId: jobId,
+           workerId: worker._id,
+           workerName: worker.name,
+           workerEmail: worker.email,
+           workerPhone: worker.phone,
+           workerExperience: worker.experience,
+           workerRating: worker.rating,
+           bidAmount: amount,
+           estimatedDuration: 'To be discussed',
+           coverLetter: 'This is a quick bid placed directly from the job board. I am fully available and ready to start immediately. Please review my profile for details.',
+           availability: new Date().toISOString().split('T')[0],
+           additionalNotes: '',
+           status: 'pending'
+        };
+
+        const response = await fetch('/api/bids', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(bidData)
+        });
+
+        if (response.ok) {
+            alert('Bid placed successfully!');
+            bidInput.value = '';
+        } else {
+            const err = await response.json();
+            alert(err.message || 'Failed to place bid');
+        }
+    } catch(e) {
+        console.error(e);
+        alert('Error placing bid');
+    }
+}

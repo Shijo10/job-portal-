@@ -143,7 +143,7 @@ registerForm.addEventListener('submit', async (e) => {
 
     try {
         console.log('Sending request...'); // Debug log
-        const response = await fetch('http://localhost:3000/api/customers/register', {
+        const response = await fetch('/api/customers/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

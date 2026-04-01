@@ -131,6 +131,10 @@
             .then(response => response.text())
             .then(html => {
                 document.body.insertAdjacentHTML('beforeend', html);
+                const script = document.createElement('script');
+                script.src = '/ai-assistant.js';
+                script.onload = () => window.initAIAssistant && window.initAIAssistant();
+                document.body.appendChild(script);
             });
     </script>
 

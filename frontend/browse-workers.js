@@ -100,7 +100,7 @@ async function loadWorkers() {
         loading.style.display = 'block';
         workersGrid.innerHTML = '';
         
-        const response = await fetch('http://localhost:3000/api/workers');
+        const response = await fetch('/api/workers');
         const data = await response.json();
         
         allWorkers = data;

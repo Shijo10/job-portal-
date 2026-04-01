@@ -34,7 +34,7 @@ function logout() {
 // Load job details
 async function loadJobDetails() {
     try {
-        const response = await fetch(`http://localhost:3000/api/jobs/${jobId}`);
+        const response = await fetch(`/api/jobs/${jobId}`);
         if (response.ok) {
             const job = await response.json();
 
@@ -138,7 +138,7 @@ document.getElementById('application-form').addEventListener('submit', async (e)
     };
 
     try {
-        const response = await fetch('http://localhost:3000/api/bids', {
+        const response = await fetch('/api/bids', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(bidData)

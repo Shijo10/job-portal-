@@ -45,7 +45,7 @@ Main admin panel with:
 
 ## API Integration
 
-The frontend connects to the backend API at `http://localhost:3000/api`
+The frontend connects to the backend API at `http://localhost:5000/api`
 
 All CRUD operations are performed via Fetch API:
 - GET requests to load data

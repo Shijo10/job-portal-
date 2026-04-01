@@ -35,11 +35,13 @@ const workersRouter = require('./routes/workers');
 const customersRouter = require('./routes/customers');
 const jobsRouter = require('./routes/jobs');
 const bidsRouter = require('./routes/bids');
+const authRouter = require('./routes/auth');
 
 app.use('/api/workers', workersRouter);
 app.use('/api/customers', customersRouter);
 app.use('/api/jobs', jobsRouter);
 app.use('/api/bids', bidsRouter);
+app.use('/api/auth', authRouter);
 
 // Dashboard stats endpoint
 app.get('/api/dashboard/stats', async (req, res) => {
@@ -139,6 +141,14 @@ app.get('/payment', (req, res) => {
 
 app.get('/apply-job', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/apply-job.html'));
+});
+
+app.get('/forgot-password', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/forgot-password.html'));
+});
+
+app.get('/reset-password', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/reset-password.html'));
 });
 
 // ============================================
@@ -264,7 +274,19 @@ const aiKnowledgeBase = {
   'business hours': 'Our platform is available 24/7! Customer support is available Monday to Sunday, 9 AM to 9 PM IST.'
 };
 
-app.post('/api/ai-assistant', (req, res) => {
+const { GoogleGenAI } = require('@google/genai');
+
+let ai;
+if (process.env.GEMINI_API_KEY) {
+  try {
+    ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    console.log('✅ Google Gen AI client initialized');
+  } catch (error) {
+    console.warn('⚠️ Failed to initialize Google Gen AI. Falling back to static replies.', error);
+  }
+}
+
+app.post('/api/ai-assistant', async (req, res) => {
   const { message } = req.body;
 
   if (!message) {
@@ -273,7 +295,38 @@ app.post('/api/ai-assistant', (req, res) => {
 
   const userMessage = message.toLowerCase().trim();
 
-  // Find matching response
+  // If Gemini AI is configured, try using it
+  if (ai) {
+    try {
+      // Build systemic context from aiKnowledgeBase
+      const knowledgeContext = Object.entries(aiKnowledgeBase)
+        .map(([q, ans]) => `Q: ${q}\nA: ${ans}`)
+        .join('\n\n');
+        
+      const systemInstruction = `You are the JobConnect AI Assistant. JobConnect is a platform connecting customers with skilled workers. 
+Use the following knowledge base to answer user questions accurately. Keep responses concise, friendly, and formatted appropriately with bullet points if listing things. Don't make up information not provided in the knowledge base or general common sense about job portals.
+Knowledge Base:\n${knowledgeContext}`;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: message,
+        config: {
+          systemInstruction: systemInstruction,
+          temperature: 0.2
+        }
+      });
+      
+      return res.json({
+        response: response.text,
+        matchedKey: 'gemini_ai',
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('❌ Gemini API Error, falling back to static response:', error.message);
+    }
+  }
+
+  // Find matching response (Static Fallback)
   let response = null;
   let matchedKey = null;
 
@@ -304,7 +357,7 @@ app.post('/api/ai-assistant', (req, res) => {
 
   res.json({
     response,
-    matchedKey,
+    matchedKey: matchedKey || 'fallback',
     timestamp: new Date().toISOString()
   });
 });

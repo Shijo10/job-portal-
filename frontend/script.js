@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api';
+const API_URL = '/api';
 let currentSection = 'dashboard';
 let editingId = null;
 let editingType = null;
@@ -86,8 +86,8 @@ async function loadRecentActivity() {
             html += `
                 <div class="activity-item">
                     <i class="fas fa-briefcase"></i>
-                    <span>New job posted: <strong>${job.title}</strong> by ${job.customerName}</span>
-                    <span class="activity-time">${formatDate(job.createdAt)}</span>
+                    <span>New job posted: <strong>₹{job.title}</strong> by ${job.customerName}</span>
+                    <span class="activity-time">₹{formatDate(job.createdAt)}</span>
                 </div>
             `;
         });
@@ -114,13 +114,13 @@ async function loadWorkers() {
 
         tbody.innerHTML = workers.map(worker => `
             <tr>
-                <td>${worker.name}</td>
-                <td>${worker.email}</td>
-                <td>${worker.phone}</td>
-                <td>${worker.skills.join(', ') || 'N/A'}</td>
-                <td>${worker.location}</td>
-                <td>$${worker.hourlyRate}</td>
-                <td><span class="badge badge-${getAvailabilityClass(worker.availability)}">${worker.availability}</span></td>
+                <td>₹{worker.name}</td>
+                <td>₹{worker.email}</td>
+                <td>₹{worker.phone}</td>
+                <td>₹{worker.skills.join(', ') || 'N/A'}</td>
+                <td>₹{worker.location}</td>
+                <td>₹${worker.hourlyRate}</td>
+                <td><span class="badge badge-${getAvailabilityClass(worker.availability)}">₹{worker.availability}</span></td>
                 <td>⭐ ${worker.rating.toFixed(1)}</td>
                 <td>
                     <div class="action-buttons">
@@ -155,13 +155,13 @@ async function loadCustomers() {
 
         tbody.innerHTML = customers.map(customer => `
             <tr>
-                <td>${customer.name}</td>
-                <td>${customer.email}</td>
-                <td>${customer.phone}</td>
-                <td>${customer.location}</td>
-                <td>${customer.company || 'N/A'}</td>
-                <td>${customer.postedJobs}</td>
-                <td><span class="badge badge-${customer.verified ? 'success' : 'warning'}">${customer.verified ? 'Yes' : 'No'}</span></td>
+                <td>₹{customer.name}</td>
+                <td>₹{customer.email}</td>
+                <td>₹{customer.phone}</td>
+                <td>₹{customer.location}</td>
+                <td>₹{customer.company || 'N/A'}</td>
+                <td>₹{customer.postedJobs}</td>
+                <td><span class="badge badge-${customer.verified ? 'success' : 'warning'}">₹{customer.verified ? 'Yes' : 'No'}</span></td>
                 <td>
                     <div class="action-buttons">
                         <button class="btn-icon btn-edit" onclick="editCustomer('${customer._id}')">
@@ -193,14 +193,14 @@ async function loadJobs() {
 
         tbody.innerHTML = jobs.map(job => `
             <tr>
-                <td>${job.title}</td>
-                <td>${job.customerName}</td>
-                <td>${job.workerName || 'Unassigned'}</td>
-                <td>${job.category}</td>
-                <td>${job.location}</td>
-                <td>$${job.budget}</td>
-                <td><span class="badge badge-${getStatusClass(job.status)}">${job.status}</span></td>
-                <td><span class="badge badge-${getPriorityClass(job.priority)}">${job.priority}</span></td>
+                <td>₹{job.title}</td>
+                <td>₹{job.customerName}</td>
+                <td>₹{job.workerName || 'Unassigned'}</td>
+                <td>₹{job.category}</td>
+                <td>₹{job.location}</td>
+                <td>₹${job.budget}</td>
+                <td><span class="badge badge-${getStatusClass(job.status)}">₹{job.status}</span></td>
+                <td><span class="badge badge-${getPriorityClass(job.priority)}">₹{job.priority}</span></td>
                 <td>
                     <div class="action-buttons">
                         <button class="btn-icon btn-edit" onclick="editJob('${job._id}')">
@@ -318,7 +318,7 @@ function getFormFields(type, data = {}) {
                 <input type="text" name="location" value="${data.location || ''}" required>
             </div>
             <div class="form-group">
-                <label>Hourly Rate ($)</label>
+                <label>Hourly Rate (₹)</label>
                 <input type="number" name="hourlyRate" value="${data.hourlyRate || 0}" min="0">
             </div>
             <div class="form-group">
@@ -365,7 +365,7 @@ function getFormFields(type, data = {}) {
             </div>
             <div class="form-group">
                 <label>Description *</label>
-                <textarea name="description" required>${data.description || ''}</textarea>
+                <textarea name="description" required>₹{data.description || ''}</textarea>
             </div>
             <div class="form-group">
                 <label>Category *</label>
@@ -384,7 +384,7 @@ function getFormFields(type, data = {}) {
                 <input type="text" name="location" value="${data.location || ''}" required>
             </div>
             <div class="form-group">
-                <label>Budget ($) *</label>
+                <label>Budget (₹) *</label>
                 <input type="number" name="budget" value="${data.budget || 0}" min="0" required>
             </div>
             <div class="form-group">
@@ -455,7 +455,7 @@ document.getElementById('modal-form').addEventListener('submit', async (e) => {
             alert(`${capitalize(editingType)} ${editingId ? 'updated' : 'created'} successfully!`);
         } else {
             const error = await response.json();
-            alert(`Error: ${error.message}`);
+            alert(`Error: ₹{error.message}`);
         }
     } catch (error) {
         console.error('Error saving data:', error);

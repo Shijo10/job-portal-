@@ -17,14 +17,14 @@ async function loadWorkerProfile() {
     
     try {
         // Fetch worker data
-        const workerResponse = await fetch(`http://localhost:3000/api/workers/${workerId}`);
+        const workerResponse = await fetch(`/api/workers/${workerId}`);
         if (!workerResponse.ok) {
             throw new Error('Worker not found');
         }
         const worker = await workerResponse.json();
         
         // Fetch jobs for this worker
-        const jobsResponse = await fetch(`http://localhost:3000/api/jobs`);
+        const jobsResponse = await fetch(`/api/jobs`);
         const allJobs = await jobsResponse.json();
         const workerJobs = allJobs.filter(job => job.workerId === workerId);
         

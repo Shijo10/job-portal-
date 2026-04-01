@@ -36,6 +36,10 @@ const jobSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  coordinates: {
+    lat: Number,
+    lng: Number
+  },
   budget: {
     type: Number,
     required: true

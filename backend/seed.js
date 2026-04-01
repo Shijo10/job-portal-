@@ -13,7 +13,7 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/job_po
 const sampleWorkers = [
     {
         name: 'Rajesh Kumar',
-        email: 'rajesh.kumar@example.com',
+        email: 'rajesh.kumar@gmail.com',
         password: 'Password123!',
         phone: '+91 98765 43210',
         skills: ['Plumbing', 'Electrical', 'General Repair'],
@@ -27,7 +27,7 @@ const sampleWorkers = [
     },
     {
         name: 'Priya Sharma',
-        email: 'priya.sharma@example.com',
+        email: 'priya.sharma@gmail.com',
         password: 'Password123!',
         phone: '+91 98765 43211',
         skills: ['Carpentry', 'Painting', 'Interior Design'],
@@ -41,7 +41,7 @@ const sampleWorkers = [
     },
     {
         name: 'Amit Patel',
-        email: 'amit.patel@example.com',
+        email: 'amit.patel@gmail.com',
         password: 'Password123!',
         phone: '+91 98765 43212',
         skills: ['HVAC', 'AC Installation', 'Refrigeration'],
@@ -55,7 +55,7 @@ const sampleWorkers = [
     },
     {
         name: 'Sunita Reddy',
-        email: 'sunita.reddy@example.com',
+        email: 'sunita.reddy@gmail.com',
         password: 'Password123!',
         phone: '+91 98765 43213',
         skills: ['Landscaping', 'Gardening', 'Plant Care'],
@@ -83,7 +83,7 @@ const sampleCustomers = [
     },
     {
         name: 'Ananya Iyer',
-        email: 'ananya.iyer@example.com',
+        email: 'ananya.iyer@gmail.com',
         password: 'Password123!',
         phone: '+91 98765 12345',
         location: 'Jayanagar, Bangalore',
@@ -144,11 +144,15 @@ async function seedDatabase() {
                 customerId: customers[0]._id,
                 customerName: customers[0].name,
                 location: 'Koramangala, Bangalore',
+                coordinates: { lat: 12.9352, lng: 77.6245 },
                 budget: 2500,
+                biddingEnabled: true,
+                minBudget: 1500,
+                maxBudget: 2500,
                 duration: '2-3 hours',
                 status: 'open',
                 priority: 'urgent',
-                deadline: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000) // 2 days from now
+                deadline: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
             },
             {
                 title: 'Paint Living Room and Bedroom',
@@ -157,7 +161,11 @@ async function seedDatabase() {
                 customerId: customers[1]._id,
                 customerName: customers[1].name,
                 location: 'Indiranagar, Bangalore',
+                coordinates: { lat: 12.9716, lng: 77.6412 },
                 budget: 8500,
+                biddingEnabled: true,
+                minBudget: 5000,
+                maxBudget: 8500,
                 duration: '2 days',
                 status: 'open',
                 priority: 'medium',
@@ -170,7 +178,11 @@ async function seedDatabase() {
                 customerId: customers[2]._id,
                 customerName: customers[2].name,
                 location: 'Whitefield, Bangalore',
+                coordinates: { lat: 12.9698, lng: 77.7500 },
                 budget: 15000,
+                biddingEnabled: true,
+                minBudget: 10000,
+                maxBudget: 15000,
                 duration: '1 day',
                 status: 'open',
                 priority: 'high',
@@ -183,7 +195,11 @@ async function seedDatabase() {
                 customerId: customers[0]._id,
                 customerName: customers[0].name,
                 location: 'HSR Layout, Bangalore',
+                coordinates: { lat: 12.9121, lng: 77.6446 },
                 budget: 12000,
+                biddingEnabled: true,
+                minBudget: 8000,
+                maxBudget: 12000,
                 duration: '3-4 days',
                 status: 'open',
                 priority: 'high',
@@ -196,7 +212,11 @@ async function seedDatabase() {
                 customerId: customers[1]._id,
                 customerName: customers[1].name,
                 location: 'Jayanagar, Bangalore',
+                coordinates: { lat: 12.9308, lng: 77.5838 },
                 budget: 5500,
+                biddingEnabled: true,
+                minBudget: 3000,
+                maxBudget: 5500,
                 duration: '2 days',
                 status: 'open',
                 priority: 'low',
@@ -209,7 +229,11 @@ async function seedDatabase() {
                 customerId: customers[2]._id,
                 customerName: customers[2].name,
                 location: 'Marathahalli, Bangalore',
+                coordinates: { lat: 12.9591, lng: 77.6971 },
                 budget: 4500,
+                biddingEnabled: true,
+                minBudget: 3000,
+                maxBudget: 4500,
                 duration: '1 day',
                 status: 'open',
                 priority: 'medium',
@@ -222,7 +246,11 @@ async function seedDatabase() {
                 customerId: customers[0]._id,
                 customerName: customers[0].name,
                 location: 'Sarjapur Road, Bangalore',
+                coordinates: { lat: 12.9107, lng: 77.6872 },
                 budget: 18000,
+                biddingEnabled: true,
+                minBudget: 12000,
+                maxBudget: 18000,
                 duration: '3-4 days',
                 status: 'open',
                 priority: 'low',
@@ -235,7 +263,11 @@ async function seedDatabase() {
                 customerId: customers[1]._id,
                 customerName: customers[1].name,
                 location: 'BTM Layout, Bangalore',
+                coordinates: { lat: 12.9166, lng: 77.6101 },
                 budget: 9500,
+                biddingEnabled: true,
+                minBudget: 6000,
+                maxBudget: 9500,
                 duration: '2 days',
                 status: 'open',
                 priority: 'urgent',
@@ -248,7 +280,11 @@ async function seedDatabase() {
                 customerId: customers[2]._id,
                 customerName: customers[2].name,
                 location: 'Yelahanka, Bangalore',
+                coordinates: { lat: 13.1007, lng: 77.5963 },
                 budget: 22000,
+                biddingEnabled: true,
+                minBudget: 15000,
+                maxBudget: 22000,
                 duration: '4-5 days',
                 status: 'open',
                 priority: 'urgent',
@@ -261,7 +297,11 @@ async function seedDatabase() {
                 customerId: customers[0]._id,
                 customerName: customers[0].name,
                 location: 'Electronic City, Bangalore',
+                coordinates: { lat: 12.8399, lng: 77.6770 },
                 budget: 25000,
+                biddingEnabled: true,
+                minBudget: 18000,
+                maxBudget: 25000,
                 duration: '5-6 days',
                 status: 'open',
                 priority: 'medium',
@@ -354,6 +394,25 @@ async function seedDatabase() {
 
         const bids = await Bid.insertMany(sampleBids);
         console.log(`✅ Added ${bids.length} bids`);
+
+        // Accept the first bid (Rajesh Kumar on 'Fix Kitchen Sink Leak') so Navigate is testable
+        bids[0].status = 'accepted';
+        await bids[0].save();
+
+        // Assign that job to the worker
+        jobs[0].workerId = workers[0]._id;
+        jobs[0].workerName = workers[0].name;
+        jobs[0].status = 'assigned';
+        jobs[0].acceptedBidId = bids[0]._id;
+        jobs[0].finalPrice = bids[0].bidAmount;
+        await jobs[0].save();
+
+        // Reject the other bids on that job
+        bids[1].status = 'rejected';
+        await bids[1].save();
+        bids[2].status = 'rejected';
+        await bids[2].save();
+        console.log('✅ Accepted bid for "Fix Kitchen Sink Leak" (Rajesh Kumar) — Navigate testable!');
 
         // Update job totalBids count
         for (const job of jobs) {

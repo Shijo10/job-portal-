@@ -2,7 +2,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const email = document.getElementById('email').value;
-    const phone = document.getElementById('phone').value;
+    const password = document.getElementById('password').value;
     const errorMessage = document.getElementById('error-message');
     const successMessage = document.getElementById('success-message');
     
@@ -11,21 +11,22 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     successMessage.classList.remove('show');
     
     try {
-        // Check if customer exists
-        const response = await fetch('http://localhost:3000/api/customers');
-        const customers = await response.json();
+        const response = await fetch('/api/customers/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+        });
         
-        const customer = customers.find(c => 
-            c.email.toLowerCase() === email.toLowerCase() && 
-            c.phone === phone
-        );
+        const data = await response.json();
         
-        if (customer) {
+        if (response.ok && data.customer) {
             // Store customer info in sessionStorage
-            sessionStorage.setItem('customerId', customer._id);
-            sessionStorage.setItem('customerName', customer.name);
-            sessionStorage.setItem('customerEmail', customer.email);
-            sessionStorage.setItem('customerLocation', customer.location);
+            sessionStorage.setItem('customerId', data.customer._id);
+            sessionStorage.setItem('customerName', data.customer.name);
+            sessionStorage.setItem('customerEmail', data.customer.email);
+            sessionStorage.setItem('customerLocation', data.customer.location);
 
             successMessage.textContent = 'Login successful! Redirecting...';
             successMessage.classList.add('show');
@@ -35,7 +36,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
                 window.location.href = '/post-job';
             }, 1000);
         } else {
-            errorMessage.textContent = 'Invalid email or phone number. Please check your credentials or register first.';
+            errorMessage.textContent = data.error || data.message || 'Invalid email or password. Please check your credentials or register first.';
             errorMessage.classList.add('show');
         }
     } catch (error) {

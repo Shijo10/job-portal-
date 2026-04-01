@@ -50,13 +50,16 @@ function setupFilterTabs() {
 // Load jobs from API
 async function loadJobs() {
     try {
-        const response = await fetch('http://localhost:3000/api/jobs');
+        const response = await fetch('/api/jobs');
         if (!response.ok) throw new Error('Failed to fetch jobs');
         
         const jobs = await response.json();
         
-        // Filter jobs for current customer
-        allJobs = jobs.filter(job => job.customerId === customerId);
+        // Filter jobs for current customer (handle populated ObjectId or raw string)
+        allJobs = jobs.filter(job => {
+            const jobCustId = job.customerId?._id || job.customerId;
+            return jobCustId && jobCustId.toString() === customerId;
+        });
         
         // Update stats
         updateStats(allJobs);
@@ -175,9 +178,16 @@ function createJobCard(job) {
             <p class="job-description">${job.description}</p>
 
             <div class="job-details">
-                <div class="job-detail">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>${job.location}</span>
+                <div class="job-detail" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <div>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>${job.location}</span>
+                    </div>
+                    ${job.coordinates && job.coordinates.lat ? `
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=${job.coordinates.lat},${job.coordinates.lng}" target="_blank" style="padding: 4px 10px; font-size: 11px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; color: #4f46e5; background: #e0e7ff; border-radius: 4px; font-weight: 600; border: 1px solid #c7d2fe;">
+                        <i class="fas fa-directions"></i> Navigate
+                    </a>
+                    ` : ''}
                 </div>
                 <div class="job-detail">
                     <i class="fas fa-rupee-sign"></i>
@@ -207,6 +217,10 @@ function createJobCard(job) {
                     <button class="btn-view-bids" onclick="viewBids('${job._id}', '${job.title}')">
                         <i class="fas fa-gavel"></i> View Bids ${job.totalBids > 0 ? `(${job.totalBids})` : ''}
                     </button>
+                ` : job.status === 'completed' ? `
+                    <button class="btn-primary" onclick="window.location.href='/payment?jobId=${job._id}'" style="background:#059669;color:white;border:none;padding:5px 15px;border-radius:5px;cursor:pointer;">
+                        <i class="fas fa-credit-card"></i> Pay Now
+                    </button>
                 ` : `
                     <button class="btn-view" onclick="window.location.href='/browse-workers'">
                         <i class="fas fa-users"></i> Browse Workers
@@ -227,7 +241,7 @@ function createJobCard(job) {
 // View bids for a job
 async function viewBids(jobId, jobTitle) {
     try {
-        const response = await fetch(`http://localhost:3000/api/bids/job/${jobId}`);
+        const response = await fetch(`/api/bids/job/${jobId}`);
         if (!response.ok) throw new Error('Failed to fetch bids');
 
         const bids = await response.json();
@@ -357,7 +371,7 @@ async function acceptBid(bidId, jobId) {
     }
 
     try {
-        const response = await fetch(`http://localhost:3000/api/bids/${bidId}/accept`, {
+        const response = await fetch(`/api/bids/${bidId}/accept`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         });
@@ -385,7 +399,7 @@ async function rejectBid(bidId, jobId) {
     }
 
     try {
-        const response = await fetch(`http://localhost:3000/api/bids/${bidId}/reject`, {
+        const response = await fetch(`/api/bids/${bidId}/reject`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         });
@@ -417,7 +431,7 @@ async function deleteJob(jobId) {
     }
 
     try {
-        const response = await fetch(`http://localhost:3000/api/jobs/${jobId}`, {
+        const response = await fetch(`/api/jobs/${jobId}`, {
             method: 'DELETE'
         });
 
